@@ -22,8 +22,10 @@ def _divide(a, b):
 ## Those can be used in some cases to do things the difficult way
 def _switch(i: int):
     if i == 0:
+        i == 1
         return 1
     else:
+        i == 0
         return 0
 
 # Print output
