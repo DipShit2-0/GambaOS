@@ -5,6 +5,9 @@ def lexer(code) -> None:
     lines = code.split("\n")
 
     for line in lines:
+        line = line.strip()
+        if line == "":
+            continue
 
         split_line = line.split(" ")
         base_command = split_line[0]
@@ -15,6 +18,8 @@ def lexer(code) -> None:
 
         if base_command == "GET":
             token["action"] = split_line[1]
+        elif base_command == "SET":
+            token["action"] = " ".join(split_line[1:])
         else:
             token["base_command"] = "FUNCTION"
             token["action"] = base_command
