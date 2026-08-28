@@ -5,6 +5,10 @@ class Boolean:
         if isinstance(self.data, str):
             self.convert()
 
+    @staticmethod
+    def is_bool(value: str):
+        return value.startswith('"') and value.endswith('"=')
+
     def convert(self):
         boolean = self.data[1:].split('"')[0]
         self.data = boolean == "true" or boolean == "True"
@@ -14,6 +18,10 @@ class Float:
         self.data = float_ # "4.0"-
         if isinstance(self.data, str):
             self.convert()
+
+    @staticmethod
+    def is_float(value: str) -> bool:
+        return value.startswith('"') and value.endswith('"-')
 
     def __add__(self, other):
         return Float(self.data + other.data)
@@ -27,6 +35,10 @@ class Integer:
         self.data = integer # "4"+
         if isinstance(self.data, str):
             self.convert()
+
+    @staticmethod
+    def is_int(value: str):
+        return value.startswith('"') and value.endswith('"+')
 
     def __add__(self, other):
         if isinstance(other, Integer):
@@ -61,6 +73,18 @@ class Integer:
             return Boolean(self.data == value.data)
         return Boolean(self.data == value)
 
+    def __lt__(self, other):
+        if isinstance(other, Integer) or\
+                isinstance(other, Float):
+            return self.data < other.data
+        return self.data < other
+
+    def __gt__(self, other):
+        if isinstance(other, Integer) or\
+                isinstance(other, Float):
+            return self.data > other.data
+        return self.data > other
+
     def convert(self):
         integer = self.data[1:]
         self.data = int(integer.split('"')[0])
@@ -70,6 +94,10 @@ class String:
         self.data = string # "abc123"!
         if convert:
             self.convert()
+
+    @staticmethod
+    def is_str(value: str):
+        return value.startswith('"') and value.endswith('"!')
 
     def convert(self):
         string = self.data[1:]
