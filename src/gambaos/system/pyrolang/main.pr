@@ -1,6 +1,2 @@
 GET out
-GET eq
-out ("Hi"!; "Hi2"!)
-
-eq ("1"+; "2"+) -> a
-out (a)
+if [] _out ("working!"!)_

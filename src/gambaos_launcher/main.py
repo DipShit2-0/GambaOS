@@ -3,6 +3,9 @@ import pygame, sverpykit as spk
 screen = spk.set_display(500, 500)
 font = spk.set_font()
 
+def start_gamba_os():
+    import src.gambaos.system.GambaOS.main
+
 ui = [
     spk.Button(
         rect=pygame.Rect(
@@ -13,6 +16,7 @@ ui = [
         button_color=(50, 50, 50),
         surface=spk.render_text("RUN"),
         display=screen,
+        function=start_gamba_os
     )
 ]
 
