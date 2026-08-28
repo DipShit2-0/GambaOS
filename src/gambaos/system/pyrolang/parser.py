@@ -8,6 +8,8 @@ def parse_value(value):
         return storage.Integer(value)
     if value.endswith("="):
         return storage.Boolean(value)
+    if value.endswith("#"):
+        return storage.List(value)
     if value in storage.storage.variables.keys():
         return storage.storage.variables[value]
     raise ValueError(f"Unrecognized data-type '{value[-1]}'.")

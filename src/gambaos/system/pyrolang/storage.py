@@ -75,6 +75,16 @@ class String:
         string = self.data[1:]
         self.data = str(string.split('"')[0])
 
+class List:
+    def __init__(self, list: str | list):
+        self.data = list # ["a", "b", "c"]#
+        if isinstance(self.data, str):
+            self.convert()
+        
+    def convert(self):
+        list = self.data.strip("[]").replace('"', '').split(', ')
+        self.data = list
+
 
 class Storage:
     def __init__(self):
@@ -84,3 +94,6 @@ class Storage:
     def add_variable(self, var, val):
         self.variables[var] = val
 storage = Storage()
+
+test = List("(\"a\", \"b\", \"c\")")
+print(test)
