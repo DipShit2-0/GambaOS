@@ -21,7 +21,12 @@ def _divide(a, b):
     return a / b
 
 def _out(*values):
-    print(*values)
+    for val in values:
+        if isinstance(val, storage.String)\
+                or isinstance(val, storage.Integer)\
+                or isinstance(val, storage.Float)\
+                or isinstance(val, storage.Boolean):
+            print(val.data)
 
 class Builtins:
     def __init__(self):

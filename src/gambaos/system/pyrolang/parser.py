@@ -6,13 +6,17 @@ def parse_value(value):
         return storage.String(value)
     if value.endswith('"+'):
         return storage.Integer(value)
+    print(storage.storage.variables)
+    if value in storage.storage.variables.keys():
+        return storage.storage.variables[value]
     raise ValueError(f"Unrecognized data-type '{value[-1]}'.")
 
-def parse(token):
+def parse(token: dict):
     # print(token)
 
     func = lambda : None
     values = []
+    save: str | None = None
 
     if token["base_command"] == "GET":
         func = Builtins.builtins_.load_builtin
@@ -24,11 +28,14 @@ def parse(token):
     elif token["base_command"] == "FUNCTION":
         func = storage.storage.functions[token["action"]]
         parameters = token["parameters"].strip()[1:].split(";")
-        print(parameters)
+        if not parameters[-1].strip().endswith(")"):
+            function_end = parameters[-1].rfind(") -> ")
+            save = parameters[-1][function_end+5:]
+            parameters[-1] = parameters[-1][:function_end]
+        else:
+            parameters[-1] = parameters[-1][:-1]
         values = []
         for parameter in parameters:
-            text = parameter.strip()[1:]
-            text = text[:text.find('"')]
-            values.append(text)
+            values.append(parse_value(parameter))
 
-    runtime.run(func, *values)
+    runtime.run(func, *values, save=save)
