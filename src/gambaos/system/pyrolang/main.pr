@@ -1,6 +1,24 @@
 GET out
 GET in
 GET add
+GET avg
+
+GET add
+GET sub
+GET mult
+GET div
+
+add ("1"+;"2.0"-;"3.5"-) -> added
+out (added)
+sub ("60"+;"5"+;"40.78"-) -> subtracted
+out (subtracted)
+mult ("4"+;"5"+;"1.5"-) -> multiplied
+out (multiplied)
+div ("4"+;"2"+;"2"+) -> divided
+out (divided)
+
+avg ("1"+;"4"+;"2"+) -> average_number
+out (average_number)
 
 func test {
     return "Pancake"!

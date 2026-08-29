@@ -1,6 +1,4 @@
 PyroLang:
-Make if-statements
-Make functions
 Make loops (for and while)
 Make a module system
 

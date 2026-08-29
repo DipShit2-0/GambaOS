@@ -1,24 +1,31 @@
 import storage
 
-# Built-in mathematical functions
-## These functions are translated and parsed through Pyrolang
+# All Built-in methods that are used for PyroLang.
+def _add(*values):
+    val = storage.Integer(values[0])
+    for v in values[1:]: val += v
+    return val.data
+
+def _subtract(*values):
+    val = storage.Integer(values[0])
+    for v in values[1:]: val -= v
+    return val.data
+
+def _multiply(*values):
+    val = storage.Integer(values[0])
+    for v in values[1:]: val *= v
+    return val.data
+
+def _divide(*values):
+    val = storage.Integer(values[0])
+    for v in values[1:]: val /= v
+    return val.data
+
 def _equals(a, b):
     return a == b
 
-def _med(a, b):
-    return (a + b) / 2
-
-def _add(a, b):
-    return a + b
-
-def _subtract(a, b):
-    return a - b
-
-def _multiply(a, b):
-    return a * b
-
-def _divide(a, b):
-    return a / b
+def _avg(*values):
+    return _add(*values) / len(values)
 
 def is_printable_value(value):
     return isinstance(value, storage.String)\
@@ -41,7 +48,7 @@ class Builtins:
     def __init__(self):
         self.methods = {
             "eq": _equals,
-            "med": _med,
+            "avg": _avg,
             "add": _add,
             "sub": _subtract,
             "mult": _multiply,

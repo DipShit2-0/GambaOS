@@ -26,6 +26,27 @@ class Float:
     def __add__(self, other):
         return Float(self.data + other.data)
 
+    def __sub__(self, other):
+        return Float(self.data - other.data)
+
+    def __mul__(self, other):
+        return Float(self.data * other.data)
+
+    def __truediv__(self, other):
+        if isinstance(other, Integer) or\
+                isinstance(other, Float):
+            return Float(self.data / other.data)
+        return Float(self.data / other)
+
+    def __eq__(self, value: object, /) -> bool:
+        return self.data == value.data
+
+    def __lt__(self, other):
+        return self.data < other.data
+
+    def __gt__(self, other):
+        return self.data > other.data
+
     def convert(self):
         float_ = self.data[1:]
         self.data = float(float_.split('"')[0])
@@ -52,7 +73,7 @@ class Integer:
             return Integer(self.data - other.data)
         if isinstance(other, Float):
             return Float(self.data - other.data)
-        return Integer(self.data - other.data)
+        return Integer(self.data - other)
 
     def __truediv__(self, other):
         if isinstance(other, Integer) or\
@@ -62,9 +83,9 @@ class Integer:
 
     def __mul__(self, other):
         if isinstance(other, Integer):
-            return Integer(self.data, other.data)
+            return Integer(self.data * other.data)
         if isinstance(other, Float):
-            return Float(self.data, other.data)
+            return Float(self.data * other.data)
         return Integer(self.data * other)
 
     def __eq__(self, value) -> Boolean:
