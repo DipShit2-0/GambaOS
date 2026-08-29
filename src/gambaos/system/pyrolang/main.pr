@@ -1,12 +1,13 @@
-GET out
-GET in
-GET add
-GET avg
+GETF modules/math.pr
+GETF modules/io.pr
+GETF external.pr
 
-GET add
-GET sub
-GET mult
-GET div
+say_hi ()
+
+return ""!
+
+min ("2"+;"1.9"-;"5.1"-) -> x
+out (x)
 
 add ("1"+;"2.0"-;"3.5"-) -> added
 out (added)

@@ -23,11 +23,7 @@ def parse_expression(expression: str) -> bool:
 
     last_count = 0
     for c, char in enumerate(expression):
-        if char == "=":
-            pass
-        elif char == ">":
-            pass
-        else:
+        if char not in operations:
             continue
         token.append(expression[last_count:c])
         token.append(char)
@@ -97,6 +93,9 @@ def parse(token: dict):
     if token["base_command"] == "GET":
         func = Builtins.builtins_.load_builtin
         values = [token["action"]]
+    elif token["base_command"] == "GETF":
+        func = storage.storage.load_file
+        values =  [token["action"]]
     elif token["base_command"] == "SET":
         func = storage.storage.add_variable
         split_action = token["action"].strip().split(" ")
@@ -120,7 +119,7 @@ def parse(token: dict):
         values = payload["values"]
     elif token["base_command"] == "FUNC": # Creation
         func = storage.storage.add_pr_function
-        values = [token["name"], token["line"]]
+        values = [token["name"], token["line"], token["file"]]
     elif token["base_command"] == "FUNCTION": # Calling
         func = storage.storage.functions[token["action"]]
         payload = parse_parameters(token["parameters"])

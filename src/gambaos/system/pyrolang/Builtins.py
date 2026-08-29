@@ -2,22 +2,22 @@ import storage
 
 # All Built-in methods that are used for PyroLang.
 def _add(*values):
-    val = storage.Integer(values[0])
+    val = storage.Float(values[0])
     for v in values[1:]: val += v
     return val.data
 
 def _subtract(*values):
-    val = storage.Integer(values[0])
+    val = storage.Float(values[0])
     for v in values[1:]: val -= v
     return val.data
 
 def _multiply(*values):
-    val = storage.Integer(values[0])
+    val = storage.Float(values[0])
     for v in values[1:]: val *= v
     return val.data
 
 def _divide(*values):
-    val = storage.Integer(values[0])
+    val = storage.Float(values[0])
     for v in values[1:]: val /= v
     return val.data
 
@@ -26,6 +26,20 @@ def _equals(a, b):
 
 def _avg(*values):
     return _add(*values) / len(values)
+
+def _max(*values):
+    highest = values[0]
+    for v in values:
+        if v.data > highest.data:
+            highest = v
+    return highest
+
+def _min(*values):
+    lowest = values[0]
+    for v in values:
+        if v.data < lowest.data:
+            lowest = v
+    return lowest
 
 def is_printable_value(value):
     return isinstance(value, storage.String)\
@@ -49,6 +63,8 @@ class Builtins:
         self.methods = {
             "eq": _equals,
             "avg": _avg,
+            "max": _max,
+            "min": _min,
             "add": _add,
             "sub": _subtract,
             "mult": _multiply,

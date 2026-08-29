@@ -131,12 +131,13 @@ class String:
 
 # FIX: Make the import at the top of the file.
 class Function:
-    def __init__(self, start):
+    def __init__(self, start, file):
         self.start = start+1
+        self.file = file
 
-    def run(self, var_name=None):
+    def run(self):
         import lexer
-        val = lexer.tokenize(lexer.main_code, self.start, function=True)
+        val = lexer.tokenize(self.file, self.start, function=True)
         return val
 
 
@@ -148,6 +149,10 @@ class Storage:
     def add_variable(self, var, val):
         self.variables[var] = val
 
-    def add_pr_function(self, name, start):
-        self.functions[name] = Function(start)
+    def add_pr_function(self, name, start, file):
+        self.functions[name] = Function(start, file)
+
+    def load_file(self, directory: str):
+        import lexer
+        lexer.tokenize(directory)
 storage = Storage()

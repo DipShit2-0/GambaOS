@@ -3,7 +3,9 @@ import typing
 
 main_code = None
 
-def tokenize(code, start: int = 0, function=False) -> None |  typing.Any:
+def tokenize(file, start: int = 0, function=False) -> None |  typing.Any:
+    with open(file, "r") as f:
+        code = f.read()
 
     lines = code.split("\n")[start:]
     skips = 0
@@ -38,25 +40,35 @@ def tokenize(code, start: int = 0, function=False) -> None |  typing.Any:
 
         base_command = split_line[0]
         token: dict[str, typing.Any] = {
-            "base_command": base_command
+            "base_command": base_command,
+            "line": count,
+            "file": file
         }
 
+        # Get built-in function/method.
         if base_command == "GET":
             token["action"] = split_line[1]
+        # Get external .pr file.
+        elif base_command == "GETF":
+            token["action"] = split_line[1]
+        # Set a variable.
         elif base_command == "SET":
             token["action"] = " ".join(split_line[1:])
+        # Run 1 function if the expression is true.
         elif base_command == "if":
             token["base_command"] = "IF"
             token["expression"] = split_line[1]
             token["evaluation"] = " ".join(split_line[2:])
+        # Create a function.
         elif base_command == "func":
             token["base_command"] = "FUNC"
             token["name"] = split_line[1]
-            token["line"] = count+start
             skips += 1
+        # Return from a function / Exit the program (Only top level).
         elif base_command == "return":
             value = None if len(split_line) == 1 else " ".join(split_line[1:])
             return parser.parse_value(value) if value is not None else None
+        # Call a function.
         else:
             token["base_command"] = "FUNCTION"
             token["action"] = base_command
