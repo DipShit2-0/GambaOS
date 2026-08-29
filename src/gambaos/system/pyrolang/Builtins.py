@@ -20,13 +20,22 @@ def _multiply(a, b):
 def _divide(a, b):
     return a / b
 
-def _out(*values):
+def is_printable_value(value):
+    return isinstance(value, storage.String)\
+        or isinstance(value, storage.Integer)\
+        or isinstance(value, storage.Float)\
+        or isinstance(value, storage.Boolean)
+
+def _out(*values, end=True):
     for val in values:
-        if isinstance(val, storage.String)\
-                or isinstance(val, storage.Integer)\
-                or isinstance(val, storage.Float)\
-                or isinstance(val, storage.Boolean):
-            print(val.data)
+        if is_printable_value(val):
+            print(val.data, end=" ")
+    if end:
+        print()
+
+def _in(*values):
+    _out(*values, end=False)
+    return storage.String(input(), convert=False)
 
 class Builtins:
     def __init__(self):
@@ -37,7 +46,8 @@ class Builtins:
             "sub": _subtract,
             "mult": _multiply,
             "div": _divide,
-            "out": _out
+            "out": _out,
+            "in": _in
         }
 
     def load_builtin(self, name):

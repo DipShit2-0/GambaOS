@@ -99,6 +99,11 @@ class String:
     def is_str(value: str):
         return value.startswith('"') and value.endswith('"!')
 
+    def __eq__(self, value: object, /) -> bool:
+        if isinstance(value, String):
+            return self.data == value.data
+        return self.data == value
+
     def convert(self):
         string = self.data[1:]
         self.data = str(string.split('"')[0])
@@ -108,9 +113,10 @@ class Function:
     def __init__(self, start):
         self.start = start+1
 
-    def run(self):
+    def run(self, var_name=None):
         import lexer
-        lexer.lexer(lexer.main_code, self.start, function=True)
+        val = lexer.tokenize(lexer.main_code, self.start, function=True)
+        return val
 
 
 class Storage:

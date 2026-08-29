@@ -1,9 +1,26 @@
 GET out
-if ["4"+>"4.0"-] _out ("working!"!)_
+GET in
+GET add
+
+func test {
+    return "Pancake"!
+}
+test () -> pancake
+add ("1"+;"2"+) -> a
+out (a)
+out (pancake)
 
 out ("Should run!"!)
 func myfunc {
-out ("Should run last!"!)
+    out ("Should run only if the user says Hi!"!)
+    return "Returning values works!"!
+    out ("Should never run"!)
 }
 out ("Should run again!"!)
-myfunc ()
+
+in ("Parrot: "!) -> parrot
+out (parrot)
+if [parrot="Hi"!] _myfunc () -> test_
+out (test)
+
+out ("End of script!"!)

@@ -23,15 +23,19 @@ def parse_expression(expression: str) -> bool:
 
     last_count = 0
     for c, char in enumerate(expression):
-        if char == ">":
-            token.append(expression[:c])
-            token.append(char)
+        if char == "=":
+            pass
+        elif char == ">":
+            pass
         else:
             continue
-        last_count = c
-    token.append(expression[last_count+1:])
+        token.append(expression[last_count:c])
+        token.append(char)
+        last_count = c+1
+    token.append(expression[last_count:])
 
 
+    # print(token)
     for c, key in enumerate(token):
 
         if key not in operations:
@@ -49,17 +53,15 @@ def parse_expression(expression: str) -> bool:
         ):
             raise TypeError(f"Invalid data type(s) for operator '{key}'.")
 
+        if key == "=":
+            if not (last_value == next_value):
+                return False
         if key == ">":
             if not (last_value > next_value):
                 return False
     return True
 
 def parse_parameters(parameters: str):
-    if parameters.strip() == "()":
-        return {
-            "values": [],
-            "save": None
-        }
     save = None
     parameters = parameters.strip()[1:].split(";")
     if not parameters[-1].strip().endswith(")"):
@@ -68,6 +70,12 @@ def parse_parameters(parameters: str):
         parameters[-1] = parameters[-1][:function_end]
     else:
         parameters[-1] = parameters[-1][:-1]
+
+    if parameters == [""]:
+        return {
+            "values": [],
+            "save": save
+        }
     values = []
 
     # Change values to their own class.
@@ -105,7 +113,7 @@ def parse(token: dict):
             raise SyntaxError("Evaluations must start and end with '_'.")
         evaluation = evaluation[1:-1].split(' ')
         name = evaluation[0]
-        arguments = evaluation[1]
+        arguments = " ".join(evaluation[1:])
         payload = parse_parameters(arguments)
         func = storage.storage.functions[name]
         save = payload["save"]
@@ -115,10 +123,11 @@ def parse(token: dict):
         values = [token["name"], token["line"]]
     elif token["base_command"] == "FUNCTION": # Calling
         func = storage.storage.functions[token["action"]]
-        if isinstance(func, storage.Function):
-            func = func.run
         payload = parse_parameters(token["parameters"])
         save = payload["save"]
         values = payload["values"]
+
+    if isinstance(func, storage.Function):
+        func = func.run
 
     runtime.run(func, *values, save=save)
