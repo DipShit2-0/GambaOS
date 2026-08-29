@@ -103,6 +103,15 @@ class String:
         string = self.data[1:]
         self.data = str(string.split('"')[0])
 
+# FIX: Make the import at the top of the file.
+class Function:
+    def __init__(self, start):
+        self.start = start+1
+
+    def run(self):
+        import lexer
+        lexer.lexer(lexer.main_code, self.start, function=True)
+
 
 class Storage:
     def __init__(self):
@@ -111,4 +120,7 @@ class Storage:
 
     def add_variable(self, var, val):
         self.variables[var] = val
+
+    def add_pr_function(self, name, start):
+        self.functions[name] = Function(start)
 storage = Storage()

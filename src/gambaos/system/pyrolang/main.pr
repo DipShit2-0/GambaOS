@@ -1,2 +1,9 @@
 GET out
-if [] _out ("working!"!)_
+if ["4"+>"4.0"-] _out ("working!"!)_
+
+out ("Should run!"!)
+func myfunc {
+out ("Should run last!"!)
+}
+out ("Should run again!"!)
+myfunc ()

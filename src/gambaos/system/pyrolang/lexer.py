@@ -1,12 +1,27 @@
 import parser
 
-def lexer(code) -> None:
+main_code = None
 
-    lines = code.split("\n")
+def lexer(code, start: int = 0, function=False) -> None:
 
-    for line in lines:
-        line = line.strip()
+    lines = code.split("\n")[start:]
+    skips = 0
+
+    for count, line in enumerate(lines):
+        line: str = line.strip()
         if line == "":
+            continue
+
+        if line.startswith("{"):
+            skips += 1
+            continue
+
+        if line.endswith("}"):
+            skips -= 1
+            if function and skips == -1:
+                return
+            continue
+        elif skips > 0:
             continue
 
         split_line = line.split(" ")
@@ -30,6 +45,11 @@ def lexer(code) -> None:
             token["base_command"] = "IF"
             token["expression"] = split_line[1]
             token["evaluation"] = " ".join(split_line[2:4])
+        elif base_command == "func":
+            token["base_command"] = "FUNC"
+            token["name"] = split_line[1]
+            token["line"] = count+start
+            skips += 1
         else:
             token["base_command"] = "FUNCTION"
             token["action"] = base_command

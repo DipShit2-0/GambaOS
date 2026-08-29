@@ -1,12 +1,17 @@
 import Builtins, runtime, storage
 
+number_operations = "<>-+*/"
+operations = "<>-+*/="
+
 def parse_value(value):
     value = value.strip()
     if value.endswith('"!'):
         return storage.String(value)
     if value.endswith('"+'):
         return storage.Integer(value)
-    if value.endswith("="):
+    if value.endswith('"-'):
+        return storage.Float(value)
+    if value.endswith('"='):
         return storage.Boolean(value)
     if value in storage.storage.variables.keys():
         return storage.storage.variables[value]
@@ -16,19 +21,45 @@ def parse_expression(expression: str) -> bool:
 
     token = []
 
+    last_count = 0
     for c, char in enumerate(expression):
         if char == ">":
+            token.append(expression[:c])
             token.append(char)
         else:
             continue
-        token.append(expression[:c])
+        last_count = c
+    token.append(expression[last_count+1:])
 
-    for key in token:
+
+    for c, key in enumerate(token):
+
+        if key not in operations:
+            continue
+
+        last_value = parse_value(token[c-1])
+        next_value = parse_value(token[c+1])
+
+        if key in number_operations and not (
+            isinstance(last_value, storage.Integer) or
+            isinstance(last_value, storage.Float)
+        ) and not (
+            isinstance(next_value, storage.Integer) or
+            isinstance(next_value, storage.Float)
+        ):
+            raise TypeError(f"Invalid data type(s) for operator '{key}'.")
+
         if key == ">":
-            pass
+            if not (last_value > next_value):
+                return False
     return True
 
 def parse_parameters(parameters: str):
+    if parameters.strip() == "()":
+        return {
+            "values": [],
+            "save": None
+        }
     save = None
     parameters = parameters.strip()[1:].split(";")
     if not parameters[-1].strip().endswith(")"):
@@ -79,8 +110,13 @@ def parse(token: dict):
         func = storage.storage.functions[name]
         save = payload["save"]
         values = payload["values"]
-    elif token["base_command"] == "FUNCTION":
+    elif token["base_command"] == "FUNC": # Creation
+        func = storage.storage.add_pr_function
+        values = [token["name"], token["line"]]
+    elif token["base_command"] == "FUNCTION": # Calling
         func = storage.storage.functions[token["action"]]
+        if isinstance(func, storage.Function):
+            func = func.run
         payload = parse_parameters(token["parameters"])
         save = payload["save"]
         values = payload["values"]
