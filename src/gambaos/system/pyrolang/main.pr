@@ -1,10 +1,13 @@
 GETF modules/math.pr
 GETF modules/io.pr
-GETF external.pr
+// GETF external.pr
 
-say_hi ()
+func say [text] {
+    out (text)
+}
+say ("Hello"!)
 
-return ""!
+return
 
 min ("2"+;"1.9"-;"5.1"-) -> x
 out (x)

@@ -3,7 +3,7 @@ import Builtins, runtime, storage
 number_operations = "<>-+*/"
 operations = "<>-+*/="
 
-def parse_value(value):
+def parse_value(value, function: storage.Function):
     value = value.strip()
     if value.endswith('"!'):
         return storage.String(value)
@@ -13,11 +13,13 @@ def parse_value(value):
         return storage.Float(value)
     if value.endswith('"='):
         return storage.Boolean(value)
+    if function and value in function.scope.keys():
+        return function.scope[value]
     if value in storage.storage.variables.keys():
         return storage.storage.variables[value]
     raise ValueError(f"Unrecognized data-type '{value[-1]}'.")
 
-def parse_expression(expression: str) -> bool:
+def parse_expression(expression: str, function: storage.Function) -> bool:
 
     token = []
 
@@ -37,8 +39,8 @@ def parse_expression(expression: str) -> bool:
         if key not in operations:
             continue
 
-        last_value = parse_value(token[c-1])
-        next_value = parse_value(token[c+1])
+        last_value = parse_value(token[c-1], function)
+        next_value = parse_value(token[c+1], function)
 
         if key in number_operations and not (
             isinstance(last_value, storage.Integer) or
@@ -57,7 +59,7 @@ def parse_expression(expression: str) -> bool:
                 return False
     return True
 
-def parse_parameters(parameters: str):
+def parse_parameters(parameters: str, function: storage.Function):
     save = None
     parameters = parameters.strip()[1:].split(";")
     if not parameters[-1].strip().endswith(")"):
@@ -76,7 +78,7 @@ def parse_parameters(parameters: str):
 
     # Change values to their own class.
     for parameter in parameters:
-        values.append(parse_value(parameter))
+        values.append(parse_value(parameter, function))
 
     return {
         "values": values,
@@ -99,13 +101,13 @@ def parse(token: dict):
     elif token["base_command"] == "SET":
         func = storage.storage.add_variable
         split_action = token["action"].strip().split(" ")
-        values = [split_action[0], parse_value(split_action[1])]
+        values = [split_action[0], parse_value(split_action[1], token["function"])]
     elif token["base_command"] == "IF":
         expression = token["expression"].strip()
         if not (expression.startswith("[") and expression.endswith("]")):
             return
         expression = expression[1:-1]
-        if not parse_expression(expression):
+        if not parse_expression(expression, token["function"]):
             return
         evaluation = token["evaluation"].strip()
         if not (evaluation.startswith("_") and evaluation.endswith("_")):
@@ -113,16 +115,20 @@ def parse(token: dict):
         evaluation = evaluation[1:-1].split(' ')
         name = evaluation[0]
         arguments = " ".join(evaluation[1:])
-        payload = parse_parameters(arguments)
+        payload = parse_parameters(arguments, token["function"])
         func = storage.storage.functions[name]
         save = payload["save"]
         values = payload["values"]
     elif token["base_command"] == "FUNC": # Creation
         func = storage.storage.add_pr_function
-        values = [token["name"], token["line"], token["file"]]
+        parameters = token["parameters"]
+        if not parameters.startswith("[") or not parameters.endswith("]"):
+            raise SyntaxError ("Parameters must start with '[' and end with ']'.")
+        parameters = parameters[1:-1].split(";")
+        values = [token["name"], token["line"], token["file"], parameters]
     elif token["base_command"] == "FUNCTION": # Calling
         func = storage.storage.functions[token["action"]]
-        payload = parse_parameters(token["parameters"])
+        payload = parse_parameters(token["parameters"], token["function"])
         save = payload["save"]
         values = payload["values"]
 

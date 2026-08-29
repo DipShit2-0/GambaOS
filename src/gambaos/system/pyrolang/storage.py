@@ -131,13 +131,20 @@ class String:
 
 # FIX: Make the import at the top of the file.
 class Function:
-    def __init__(self, start, file):
+    def __init__(self, start, file, parameters):
         self.start = start+1
         self.file = file
+        self.parameters = parameters
 
-    def run(self):
+        self.scope = {}
+
+    def run(self, *arguments):
         import lexer
-        val = lexer.tokenize(self.file, self.start, function=True)
+        if len(self.parameters) != len(arguments):
+            raise TypeError(f"This function accepts '{len(self.parameters)}', but you gave '{len(arguments)}'.")
+        for count, parameter in enumerate(self.parameters):
+            self.scope[parameter] = arguments[count]
+        val = lexer.tokenize(self.file, self.start, function=self)
         return val
 
 
@@ -149,8 +156,8 @@ class Storage:
     def add_variable(self, var, val):
         self.variables[var] = val
 
-    def add_pr_function(self, name, start, file):
-        self.functions[name] = Function(start, file)
+    def add_pr_function(self, name, start, file, parameters):
+        self.functions[name] = Function(start, file, parameters)
 
     def load_file(self, directory: str):
         import lexer

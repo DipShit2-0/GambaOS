@@ -3,7 +3,7 @@ import typing
 
 main_code = None
 
-def tokenize(file, start: int = 0, function=False) -> None |  typing.Any:
+def tokenize(file, start: int = 0, function=False) -> None | typing.Any:
     with open(file, "r") as f:
         code = f.read()
 
@@ -41,6 +41,7 @@ def tokenize(file, start: int = 0, function=False) -> None |  typing.Any:
         base_command = split_line[0]
         token: dict[str, typing.Any] = {
             "base_command": base_command,
+            "function": function,
             "line": count,
             "file": file
         }
@@ -61,13 +62,16 @@ def tokenize(file, start: int = 0, function=False) -> None |  typing.Any:
             token["evaluation"] = " ".join(split_line[2:])
         # Create a function.
         elif base_command == "func":
+            if not split_line[-1].endswith("{"):
+                raise SyntaxError("First line of a function must end on a '{'.")
             token["base_command"] = "FUNC"
             token["name"] = split_line[1]
+            token["parameters"] = split_line[2]
             skips += 1
         # Return from a function / Exit the program (Only top level).
         elif base_command == "return":
             value = None if len(split_line) == 1 else " ".join(split_line[1:])
-            return parser.parse_value(value) if value is not None else None
+            return parser.parse_value(value, function) if value is not None else None
         # Call a function.
         else:
             token["base_command"] = "FUNCTION"
