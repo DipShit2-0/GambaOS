@@ -1,3 +1,4 @@
+import sverpykit as spk
 
 class Boolean:
     def __init__(self, boolean: str | bool):
@@ -139,7 +140,7 @@ class Function:
         self.scope = {}
 
     def run(self, *arguments):
-        import lexer
+        from src.gambaos.system.pyrolang import lexer
         if len(self.parameters) != len(arguments):
             raise TypeError(f"This function accepts '{len(self.parameters)}', but you gave '{len(arguments)}'.")
         for count, parameter in enumerate(self.parameters):
@@ -149,9 +150,11 @@ class Function:
 
 
 class Storage:
-    def __init__(self):
+    def __init__(self, text_block):
         self.variables = {}
         self.functions = {}
+
+        self.text_block: spk.TextBlock = text_block
 
     def add_variable(self, var, val):
         self.variables[var] = val
@@ -160,6 +163,6 @@ class Storage:
         self.functions[name] = Function(start, file, parameters)
 
     def load_file(self, directory: str):
-        import lexer
+        from src.gambaos.system.pyrolang import lexer
         lexer.tokenize(directory)
-storage = Storage()
+storage: Storage

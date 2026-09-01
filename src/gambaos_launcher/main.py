@@ -1,6 +1,7 @@
 import pygame, sverpykit as spk
 
 screen = spk.set_display(500, 500)
+pygame.display.set_caption("GambaOS Launcher")
 font = spk.set_font()
 
 def start_gamba_os():

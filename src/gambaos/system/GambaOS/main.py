@@ -1,6 +1,7 @@
 import pygame, sverpykit as spk
 import src.gambaos.system.GambaOS.Config as Config
 import src.gambaos.system.GambaOS.Ui as Ui
+pygame.display.set_caption("GambaOS")
 
 spk.set_font()
 

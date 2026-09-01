@@ -1,4 +1,4 @@
-import storage
+from src.gambaos.system.pyrolang import storage
 
 # All Built-in methods that are used for PyroLang.
 def _add(*values):
@@ -50,9 +50,12 @@ def is_printable_value(value):
 def _out(*values, end=True):
     for val in values:
         if is_printable_value(val):
-            print(val.data, end=" ")
-    if end:
-        print()
+            storage.storage.text_block.change_text(
+                f"{storage.storage.text_block.text}{val.data} "
+            )
+    storage.storage.text_block.change_text(
+        f"{storage.storage.text_block.text}\n"
+    )
 
 def _in(*values):
     _out(*values, end=False)
