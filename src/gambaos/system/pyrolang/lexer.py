@@ -1,4 +1,4 @@
-import parser
+from src.gambaos.system.pyrolang import parser
 import typing
 
 main_code = None

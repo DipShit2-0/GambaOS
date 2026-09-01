@@ -1,4 +1,4 @@
-import Builtins, storage
+from src.gambaos.system.pyrolang import Builtins, storage
 
 def run(func, *values, save: str | None = None):
     val = func(*values)

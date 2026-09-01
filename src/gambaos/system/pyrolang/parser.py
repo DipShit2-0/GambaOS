@@ -1,4 +1,4 @@
-import Builtins, runtime, storage
+from src.gambaos.system.pyrolang import Builtins, runtime, storage
 
 def parse_value(value):
     value = value.strip()
