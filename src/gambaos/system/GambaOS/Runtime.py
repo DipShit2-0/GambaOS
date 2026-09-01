@@ -19,7 +19,7 @@ def get_application_buttons() -> list[spk.Button]:
                     30
                 ),
                 button_color=(100, 100, 100),
-                surface=spk.render_text(f"{path}"),
+                surface=spk.render_text(f"{path.capitalize()}"),
                 display=Config.screen,
                 function=launch_application,
                 application_path = path

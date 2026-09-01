@@ -12,5 +12,7 @@ def frame():
     spk.draw_surface(welcome_text, (0, 0))
     [part.update() for part in ui]
 
+spk.max_rate(60, 60)
+
 spk.set_frame_method(frame)
 spk.start()
